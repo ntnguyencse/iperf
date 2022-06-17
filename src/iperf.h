@@ -168,6 +168,7 @@ struct iperf_settings
 #endif // HAVE_SSL
     int	      connect_timeout;	    /* socket connection timeout, in ms */
     int       idle_timeout;         /* server idle time timeout */
+    unsigned int snd_timeout; /* Timeout for sending tcp messages in active mode, in us */
     struct iperf_time rcv_timeout;  /* Timeout for receiving messages in active mode, in us */
 };
 
@@ -257,6 +258,15 @@ enum iperf_mode {
 	BIDIRECTIONAL = -1
 };
 
+enum debug_level {
+    DEBUG_LEVEL_ERROR = 1,
+    DEBUG_LEVEL_WARN = 2,
+    DEBUG_LEVEL_INFO = 3,
+    DEBUG_LEVEL_DEBUG = 4,
+    DEBUG_LEVEL_MAX = 4
+};
+
+
 struct iperf_test
 {
     char      role;                             /* 'c' lient or 's' erver */
@@ -311,6 +321,7 @@ struct iperf_test
     int	      json_output;                      /* -J option - JSON output */
     int	      zerocopy;                         /* -Z option - use sendfile */
     int       debug;				/* -d option - enable debug */
+    enum      debug_level debug_level;          /* -d option option - level of debug messages to show */
     int	      get_server_output;		/* --get-server-output */
     int	      udp_counters_64bit;		/* --use-64-bit-udp-counters */
     int       forceflush; /* --forceflush - flushing output at every interval */
@@ -426,7 +437,7 @@ extern int gerror; /* error value from getaddrinfo(3), for use in internal error
 #define UDP_CONNECT_REPLY 0x39383736        // "9876" - legacy value was 987654321
 #define LEGACY_UDP_CONNECT_REPLY 987654321  // Old servers may still reply with the legacy value
 
-/* In Reverse mode, maxmimum number of packtes to wait for "accept" response - to handle out of order packets */
+/* In Reverse mode, maximum number of packets to wait for "accept" response - to handle out of order packets */
 #define MAX_REVERSE_OUT_OF_ORDER_PACKETS 2
 
 #endif /* !__IPERF_H */
